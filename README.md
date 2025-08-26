@@ -5,7 +5,7 @@ A high-performance, flash-loan-integrated MEV (Maximal Extractable Value)  https
 
 ## Contact Information
 
-- **Discord**: [@i3visio](https://discord.gg/8Zu7W8pS)
+- **Discord**: [@i3visio](https://discord.gg/XtbzXGtKDs)
 - **Telegram**: [@i3visioo](https://t.me/i3visioo)
 - **Email**: [i3visio89@gmail.com](mailto:i3visio89@gmail.com)
 
@@ -254,6 +254,6 @@ This is an array of tables, where each table configures the arbitrage route for 
 
 ## Contact Information
 
-- **Discord**: [@i3visio](https://discord.gg/8Zu7W8pS)
+- **Discord**: [@i3visio](https://discord.gg/XtbzXGtKDs)
 - **Telegram**: [@i3visioo](https://t.me/i3visioo)
 - **Email**: [i3visio89@gmail.com](mailto:i3visio89@gmail.com)
