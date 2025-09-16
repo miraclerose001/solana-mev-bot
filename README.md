@@ -192,20 +192,16 @@ A practical approach to implementing this workflow would be:
     ```
 
 2.  **Configure the Bot:**
-    Create a `config.toml` file by copying the example:
+    Create a `.env` file by copying the example:
     ```bash
-    cp config.toml.example config.toml
+    cp .env.example .env
     ```
-    Then, edit the `config.toml` file with your settings. See the detailed configuration guide below.
+    Then, add your rpc and wallet key.
 
 3.  **Run the Bot:**
     ```bash
     cargo run
     ```
-
-## Configuration Guide (`config.toml`)
-
-This section provides a detailed explanation of all the options in the `config.toml` file.
 
 ### `[bot]`
 
