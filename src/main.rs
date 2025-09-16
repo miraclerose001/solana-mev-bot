@@ -6,6 +6,7 @@ use solana_mev_bot::{
     config::Config,
 };
 use solana_client::rpc_client::RpcClient;
+use solana_sdk::{signature::Keypair, signer::Signer};
 use std::sync::Arc;
 use tracing_subscriber::{EnvFilter, FmtSubscriber};
 
@@ -29,6 +30,19 @@ async fn main() {
     println!("Configuration loaded successfully!");
     println!("RPC URL: {}", config.rpc.url);
     println!("Compute unit limit: {}", config.bot.compute_unit_limit);
+
+    // Parse wallet private key and derive wallet address
+    let wallet_keypair = match Keypair::from_base58_string(&config.wallet.private_key) {
+        Ok(keypair) => keypair,
+        Err(e) => {
+            eprintln!("Failed to parse wallet private key: {}", e);
+            eprintln!("Please ensure your WALLET_PRIVATE_KEY in .env is a valid Base58 encoded private key");
+            return;
+        }
+    };
+    
+    let wallet_address = wallet_keypair.pubkey().to_string();
+    println!("Wallet address: {}", wallet_address);
 
     // Initialize RPC client
     let rpc_client = Arc::new(RpcClient::new(config.rpc.url.clone()));
@@ -59,7 +73,7 @@ async fn main() {
         match token_fetcher
             .initialize_pool_data(
                 &mint_config.mint,
-                "YOUR_WALLET_ADDRESS", // Replace with actual wallet address
+                &wallet_address, // Use derived wallet address
                 mint_config.raydium_pool_list.as_ref(),
                 mint_config.raydium_cp_pool_list.as_ref(),
                 mint_config.pump_pool_list.as_ref(),
