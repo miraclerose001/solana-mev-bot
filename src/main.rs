@@ -32,14 +32,7 @@ async fn main() {
     println!("Compute unit limit: {}", config.bot.compute_unit_limit);
 
     // Parse wallet private key and derive wallet address
-    let wallet_keypair = match Keypair::from_base58_string(&config.wallet.private_key) {
-        Ok(keypair) => keypair,
-        Err(e) => {
-            eprintln!("Failed to parse wallet private key: {}", e);
-            eprintln!("Please ensure your WALLET_PRIVATE_KEY in .env is a valid Base58 encoded private key");
-            return;
-        }
-    };
+    let wallet_keypair = Keypair::from_base58_string(&config.wallet.private_key);
     
     let wallet_address = wallet_keypair.pubkey().to_string();
     println!("Wallet address: {}", wallet_address);
