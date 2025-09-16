@@ -2,9 +2,8 @@ use crate::chain::pools::{MintPoolData, PumpPool, RaydiumPool};
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use solana_client::rpc_client::RpcClient;
-use solana_sdk::pubkey::Pubkey;
 use std::{collections::HashMap, sync::Arc, time::Instant};
-use tracing::{debug, error, info, warn};
+use tracing::{info, warn};
 
 /// Token price information
 #[derive(Debug, Clone, Serialize, Deserialize)]
