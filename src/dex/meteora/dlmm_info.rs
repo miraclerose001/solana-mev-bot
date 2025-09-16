@@ -3,7 +3,6 @@ use crate::dex::meteora::{
 };
 use anchor_lang::AccountDeserialize;
 use anyhow::Result;
-use arrayref::array_ref;
 use solana_sdk::pubkey::Pubkey;
 use std::mem::size_of;
 

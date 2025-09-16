@@ -38,7 +38,7 @@ impl VertigoInfo {
         })
     }
 
-    pub fn get_token_and_sol_vaults(&self, base_mint: &str, sol_mint: &Pubkey) -> (Pubkey, Pubkey) {
+    pub fn get_token_and_sol_vaults(&self, base_mint: &str, _sol_mint: &Pubkey) -> (Pubkey, Pubkey) {
         let token_x_vault = if base_mint == self.mint_a.to_string() {
             derive_vault_address(&self.pool, &self.mint_b).0
         } else {

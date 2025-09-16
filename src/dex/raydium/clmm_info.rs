@@ -161,7 +161,7 @@ impl PoolState {
         let mut tick_current_bytes = [0u8; 4];
         tick_current_bytes.copy_from_slice(&data[offset..offset + 4]);
         let tick_current = i32::from_le_bytes(tick_current_bytes);
-        offset += 4;
+        let _ = offset + 4;
 
         Ok(Self {
             amm_config,

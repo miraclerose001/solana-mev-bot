@@ -303,7 +303,7 @@ impl MarketDataFetcher {
     }
 
     /// Calculate price from Raydium pool
-    async fn calculate_raydium_price(&self, pool: &RaydiumPool) -> Result<f64> {
+    async fn calculate_raydium_price(&self, _pool: &RaydiumPool) -> Result<f64> {
         // This is a simplified calculation
         // In a real implementation, you would:
         // 1. Fetch the current reserves from the vaults
@@ -315,7 +315,7 @@ impl MarketDataFetcher {
     }
 
     /// Calculate price from Pump pool
-    async fn calculate_pump_price(&self, pool: &PumpPool) -> Result<f64> {
+    async fn calculate_pump_price(&self, _pool: &PumpPool) -> Result<f64> {
         // Similar to Raydium calculation
         Ok(1.0) // Placeholder
     }

@@ -142,55 +142,81 @@ impl TokenFetcher {
         let mut pool_data = MintPoolData::new(mint, wallet_account, token_program)?;
         info!("Pool data initialized for mint: {}", mint);
 
-        // Fetch pools in parallel batches for better performance
-        let mut tasks = Vec::new();
-
-        // Add pool fetching tasks
-        if let Some(pools) = pump_pools {
-            tasks.push(self.fetch_pump_pools(pools, &mint_pubkey));
-        }
-        if let Some(pools) = raydium_pools {
-            tasks.push(self.fetch_raydium_pools(pools, &mint_pubkey));
-        }
-        if let Some(pools) = raydium_cp_pools {
-            tasks.push(self.fetch_raydium_cp_pools(pools, &mint_pubkey));
-        }
-        if let Some(pools) = dlmm_pools {
-            tasks.push(self.fetch_dlmm_pools(pools, &mint_pubkey));
-        }
-        if let Some(pools) = whirlpool_pools {
-            tasks.push(self.fetch_whirlpool_pools(pools, &mint_pubkey));
-        }
-        if let Some(pools) = raydium_clmm_pools {
-            tasks.push(self.fetch_raydium_clmm_pools(pools, &mint_pubkey));
-        }
-        if let Some(pools) = meteora_damm_pools {
-            tasks.push(self.fetch_meteora_damm_pools(pools, &mint_pubkey));
-        }
-        if let Some(pools) = solfi_pools {
-            tasks.push(self.fetch_solfi_pools(pools, &mint_pubkey));
-        }
-        if let Some(pools) = meteora_damm_v2_pools {
-            tasks.push(self.fetch_meteora_damm_v2_pools(pools, &mint_pubkey));
-        }
-        if let Some(pools) = vertigo_pools {
-            tasks.push(self.fetch_vertigo_pools(pools, &mint_pubkey));
-        }
-
-        // Execute all tasks concurrently
-        let results = futures::future::join_all(tasks).await;
+        // Fetch pools concurrently using join! macro for better performance
+        let (pump_result, raydium_result, raydium_cp_result, dlmm_result, whirlpool_result, 
+             raydium_clmm_result, meteora_damm_result, solfi_result, meteora_damm_v2_result, vertigo_result) = 
+            futures::join!(
+                if let Some(pools) = pump_pools { self.fetch_pump_pools(pools, &mint_pubkey) } else { Ok(Vec::new()) },
+                if let Some(pools) = raydium_pools { self.fetch_raydium_pools(pools, &mint_pubkey) } else { Ok(Vec::new()) },
+                if let Some(pools) = raydium_cp_pools { self.fetch_raydium_cp_pools(pools, &mint_pubkey) } else { Ok(Vec::new()) },
+                if let Some(pools) = dlmm_pools { self.fetch_dlmm_pools(pools, &mint_pubkey) } else { Ok(Vec::new()) },
+                if let Some(pools) = whirlpool_pools { self.fetch_whirlpool_pools(pools, &mint_pubkey) } else { Ok(Vec::new()) },
+                if let Some(pools) = raydium_clmm_pools { self.fetch_raydium_clmm_pools(pools, &mint_pubkey) } else { Ok(Vec::new()) },
+                if let Some(pools) = meteora_damm_pools { self.fetch_meteora_damm_pools(pools, &mint_pubkey) } else { Ok(Vec::new()) },
+                if let Some(pools) = solfi_pools { self.fetch_solfi_pools(pools, &mint_pubkey) } else { Ok(Vec::new()) },
+                if let Some(pools) = meteora_damm_v2_pools { self.fetch_meteora_damm_v2_pools(pools, &mint_pubkey) } else { Ok(Vec::new()) },
+                if let Some(pools) = vertigo_pools { self.fetch_vertigo_pools(pools, &mint_pubkey) } else { Ok(Vec::new()) }
+            );
 
         // Merge results into pool_data
-        for result in results {
-            match result {
-                Ok(pool_batch) => {
-                    self.merge_pool_batch(&mut pool_data, pool_batch)?;
-                }
-                Err(e) => {
-                    warn!("Failed to fetch some pools: {}", e);
-                    // Continue with other pools instead of failing completely
-                }
-            }
+        if let Ok(pools) = pump_result {
+            pool_data.pump_pools.extend(pools);
+        } else if let Err(e) = pump_result {
+            warn!("Failed to fetch pump pools: {}", e);
+        }
+
+        if let Ok(pools) = raydium_result {
+            pool_data.raydium_pools.extend(pools);
+        } else if let Err(e) = raydium_result {
+            warn!("Failed to fetch raydium pools: {}", e);
+        }
+
+        if let Ok(pools) = raydium_cp_result {
+            pool_data.raydium_cp_pools.extend(pools);
+        } else if let Err(e) = raydium_cp_result {
+            warn!("Failed to fetch raydium cp pools: {}", e);
+        }
+
+        if let Ok(pools) = dlmm_result {
+            pool_data.dlmm_pairs.extend(pools);
+        } else if let Err(e) = dlmm_result {
+            warn!("Failed to fetch dlmm pools: {}", e);
+        }
+
+        if let Ok(pools) = whirlpool_result {
+            pool_data.whirlpool_pools.extend(pools);
+        } else if let Err(e) = whirlpool_result {
+            warn!("Failed to fetch whirlpool pools: {}", e);
+        }
+
+        if let Ok(pools) = raydium_clmm_result {
+            pool_data.raydium_clmm_pools.extend(pools);
+        } else if let Err(e) = raydium_clmm_result {
+            warn!("Failed to fetch raydium clmm pools: {}", e);
+        }
+
+        if let Ok(pools) = meteora_damm_result {
+            pool_data.meteora_damm_pools.extend(pools);
+        } else if let Err(e) = meteora_damm_result {
+            warn!("Failed to fetch meteora damm pools: {}", e);
+        }
+
+        if let Ok(pools) = solfi_result {
+            pool_data.solfi_pools.extend(pools);
+        } else if let Err(e) = solfi_result {
+            warn!("Failed to fetch solfi pools: {}", e);
+        }
+
+        if let Ok(pools) = meteora_damm_v2_result {
+            pool_data.meteora_damm_v2_pools.extend(pools);
+        } else if let Err(e) = meteora_damm_v2_result {
+            warn!("Failed to fetch meteora damm v2 pools: {}", e);
+        }
+
+        if let Ok(pools) = vertigo_result {
+            pool_data.vertigo_pools.extend(pools);
+        } else if let Err(e) = vertigo_result {
+            warn!("Failed to fetch vertigo pools: {}", e);
         }
 
         // Cache the result
@@ -380,27 +406,27 @@ impl TokenFetcher {
 
         let amm_info = RaydiumAmmInfo::load_checked(&account.data)?;
         
-        let (sol_vault, token_vault) = if sol_mint() == amm_info.base_mint {
+        let (sol_vault, token_vault) = if sol_mint() == amm_info.coin_mint {
             (
-                amm_info.pool_base_token_account,
-                amm_info.pool_quote_token_account,
+                amm_info.coin_vault,
+                amm_info.pc_vault,
             )
-        } else if sol_mint() == amm_info.quote_mint {
+        } else if sol_mint() == amm_info.pc_mint {
             (
-                amm_info.pool_quote_token_account,
-                amm_info.pool_base_token_account,
+                amm_info.pc_vault,
+                amm_info.coin_vault,
             )
         } else {
             (
-                amm_info.pool_quote_token_account,
-                amm_info.pool_base_token_account,
+                amm_info.pc_vault,
+                amm_info.coin_vault,
             )
         };
 
-        let (token_mint, base_mint) = if *mint_pubkey == amm_info.base_mint {
-            (amm_info.base_mint, amm_info.quote_mint)
+        let (token_mint, base_mint) = if *mint_pubkey == amm_info.coin_mint {
+            (amm_info.coin_mint, amm_info.pc_mint)
         } else {
-            (amm_info.quote_mint, amm_info.base_mint)
+            (amm_info.pc_mint, amm_info.coin_mint)
         };
 
         Ok(RaydiumPool {
@@ -485,11 +511,6 @@ impl TokenFetcher {
         Ok(Vec::new())
     }
 
-    /// Merge pool batch into main pool data
-    fn merge_pool_batch(&self, pool_data: &mut MintPoolData, pool_batch: PoolBatch) -> Result<()> {
-        // TODO: Implement merging logic for different pool types
-        Ok(())
-    }
 
     /// Clear expired cache entries
     pub fn clear_expired_cache(&mut self) {
@@ -513,35 +534,4 @@ impl TokenFetcher {
     }
 }
 
-/// Batch of pools for concurrent processing
-#[derive(Debug)]
-struct PoolBatch {
-    pump_pools: Vec<PumpPool>,
-    raydium_pools: Vec<RaydiumPool>,
-    raydium_cp_pools: Vec<RaydiumCpPool>,
-    dlmm_pools: Vec<DlmmPool>,
-    whirlpool_pools: Vec<WhirlpoolPool>,
-    raydium_clmm_pools: Vec<RaydiumClmmPool>,
-    meteora_damm_pools: Vec<MeteoraDAmmPool>,
-    solfi_pools: Vec<SolfiPool>,
-    meteora_damm_v2_pools: Vec<MeteoraDAmmV2Pool>,
-    vertigo_pools: Vec<VertigoPool>,
-}
-
-impl PoolBatch {
-    fn new() -> Self {
-        Self {
-            pump_pools: Vec::new(),
-            raydium_pools: Vec::new(),
-            raydium_cp_pools: Vec::new(),
-            dlmm_pools: Vec::new(),
-            whirlpool_pools: Vec::new(),
-            raydium_clmm_pools: Vec::new(),
-            meteora_damm_pools: Vec::new(),
-            solfi_pools: Vec::new(),
-            meteora_damm_v2_pools: Vec::new(),
-            vertigo_pools: Vec::new(),
-        }
-    }
-}
 

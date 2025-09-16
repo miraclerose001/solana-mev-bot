@@ -88,6 +88,7 @@ impl Config {
         // Helper function to get u32 environment variable
         fn get_u32_env(key: &str, default: u32) -> u32 {
             env::var(key)
+                .ok()
                 .and_then(|v| v.parse().ok())
                 .unwrap_or(default)
         }
@@ -95,13 +96,14 @@ impl Config {
         // Helper function to get u64 environment variable
         fn get_u64_env(key: &str, default: u64) -> u64 {
             env::var(key)
+                .ok()
                 .and_then(|v| v.parse().ok())
                 .unwrap_or(default)
         }
 
         // Helper function to get optional u64 environment variable
         fn get_optional_u64_env(key: &str) -> Option<u64> {
-            env::var(key).and_then(|v| v.parse().ok()).ok()
+            env::var(key).ok().and_then(|v| v.parse().ok())
         }
 
         // Helper function to parse comma-separated string into Vec<String>
