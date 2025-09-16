@@ -151,16 +151,76 @@ impl TokenFetcher {
         let (pump_result, raydium_result, raydium_cp_result, dlmm_result, whirlpool_result, 
              raydium_clmm_result, meteora_damm_result, solfi_result, meteora_damm_v2_result, vertigo_result) = 
             futures::join!(
-                if let Some(pools) = pump_pools { self.fetch_pump_pools(pools, &mint_pubkey) } else { empty_result().await },
-                if let Some(pools) = raydium_pools { self.fetch_raydium_pools(pools, &mint_pubkey) } else { empty_result().await },
-                if let Some(pools) = raydium_cp_pools { self.fetch_raydium_cp_pools(pools, &mint_pubkey) } else { empty_result().await },
-                if let Some(pools) = dlmm_pools { self.fetch_dlmm_pools(pools, &mint_pubkey) } else { empty_result().await },
-                if let Some(pools) = whirlpool_pools { self.fetch_whirlpool_pools(pools, &mint_pubkey) } else { empty_result().await },
-                if let Some(pools) = raydium_clmm_pools { self.fetch_raydium_clmm_pools(pools, &mint_pubkey) } else { empty_result().await },
-                if let Some(pools) = meteora_damm_pools { self.fetch_meteora_damm_pools(pools, &mint_pubkey) } else { empty_result().await },
-                if let Some(pools) = solfi_pools { self.fetch_solfi_pools(pools, &mint_pubkey) } else { empty_result().await },
-                if let Some(pools) = meteora_damm_v2_pools { self.fetch_meteora_damm_v2_pools(pools, &mint_pubkey) } else { empty_result().await },
-                if let Some(pools) = vertigo_pools { self.fetch_vertigo_pools(pools, &mint_pubkey) } else { empty_result().await }
+                async {
+                    if let Some(pools) = pump_pools { 
+                        self.fetch_pump_pools(pools, &mint_pubkey).await 
+                    } else { 
+                        empty_result().await 
+                    }
+                },
+                async {
+                    if let Some(pools) = raydium_pools { 
+                        self.fetch_raydium_pools(pools, &mint_pubkey).await 
+                    } else { 
+                        empty_result().await 
+                    }
+                },
+                async {
+                    if let Some(pools) = raydium_cp_pools { 
+                        self.fetch_raydium_cp_pools(pools, &mint_pubkey).await 
+                    } else { 
+                        empty_result().await 
+                    }
+                },
+                async {
+                    if let Some(pools) = dlmm_pools { 
+                        self.fetch_dlmm_pools(pools, &mint_pubkey).await 
+                    } else { 
+                        empty_result().await 
+                    }
+                },
+                async {
+                    if let Some(pools) = whirlpool_pools { 
+                        self.fetch_whirlpool_pools(pools, &mint_pubkey).await 
+                    } else { 
+                        empty_result().await 
+                    }
+                },
+                async {
+                    if let Some(pools) = raydium_clmm_pools { 
+                        self.fetch_raydium_clmm_pools(pools, &mint_pubkey).await 
+                    } else { 
+                        empty_result().await 
+                    }
+                },
+                async {
+                    if let Some(pools) = meteora_damm_pools { 
+                        self.fetch_meteora_damm_pools(pools, &mint_pubkey).await 
+                    } else { 
+                        empty_result().await 
+                    }
+                },
+                async {
+                    if let Some(pools) = solfi_pools { 
+                        self.fetch_solfi_pools(pools, &mint_pubkey).await 
+                    } else { 
+                        empty_result().await 
+                    }
+                },
+                async {
+                    if let Some(pools) = meteora_damm_v2_pools { 
+                        self.fetch_meteora_damm_v2_pools(pools, &mint_pubkey).await 
+                    } else { 
+                        empty_result().await 
+                    }
+                },
+                async {
+                    if let Some(pools) = vertigo_pools { 
+                        self.fetch_vertigo_pools(pools, &mint_pubkey).await 
+                    } else { 
+                        empty_result().await 
+                    }
+                }
             );
 
         // Merge results into pool_data

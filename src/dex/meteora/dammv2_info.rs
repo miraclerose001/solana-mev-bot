@@ -1,4 +1,3 @@
-use anyhow::Result;
 use solana_program::pubkey::Pubkey;
 
 pub fn get_dammv2_info(data: &[u8]) -> (Pubkey, Pubkey, Pubkey, Pubkey) {
