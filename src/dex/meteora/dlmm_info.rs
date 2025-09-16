@@ -1,7 +1,6 @@
 use crate::dex::meteora::{
     constants::{dlmm_program_id, BIN_ARRAY},
 };
-use anchor_lang::AccountDeserialize;
 use anyhow::Result;
 use solana_sdk::pubkey::Pubkey;
 use std::mem::size_of;
